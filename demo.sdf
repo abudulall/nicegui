@@ -1,0 +1,464 @@
+<?xml version="1.0" ?>
+<sdf version="1.5" version2="1.5">
+  <model name="vehicle">
+  <static name="base_link">
+    false
+  </static>
+
+  <!-- ****************** ROBOT BASE FOOTPRINT ***************************  -->
+  <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+  <!-- ********************** ROBOT BASE *********************************  -->
+  <link name="base_link">
+    <pose relative_to='__model__'>0  0 0  0 0 0</pose>
+    <inertial> <!--inertial properties of the link mass, inertia matix-->
+        <mass>10.14395</mass>
+        <inertia>
+            <ixx>0.095329</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.381317</iyy>
+            <iyz>0</iyz>
+            <izz>0.476646</izz>
+        </inertia>
+    </inertial>
+
+    <collision name="base_collision">
+      <pose>0 0 0.1 0 0 0</pose>
+      <geometry>
+        <box>
+          <size>0.70 0.39 0.20</size>
+        </box>
+      </geometry>
+    </collision>
+
+    <visual name="base_visual">
+      <pose>0 0 -0.05 1.5707963267949 0 3.141592654</pose>
+      <geometry>
+        <mesh>
+          <uri>package://ign_demos/models/two_wheeled_robot_description/meshes/robot_base.stl</uri>
+          <scale>1.0 1.0 1.0</scale>
+        </mesh>
+      </geometry>
+      <material>
+        <ambient>1.0 0.0 0.0 1.0</ambient>
+        <diffuse>1.0 0.0 0.0 1.0</diffuse>
+        <specular>0.0 0.0 0.0 1.0</specular>
+        <emissive>0.0 0.0 0.0 1.0</emissive>
+      </material>
+    </visual>
+
+  </link>
+
+  <!-- *********************** IMU SENSOR SETUP **************************  -->
+  <link name="imu_link">
+    <gravity>true</gravity>
+
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>1</update_rate>
+      <visualize>true</visualize>
+      <topic>imu</topic>
+    </sensor>
+  </link>
+
+  <!-- ****************************** LIDAR *****************************    -->
+  <link name="lidar_link">
+    <inertial>
+      <pose>0.215 0 0.13 0 0 0</pose>
+      <inertia>
+        <ixx>0.001</ixx>
+        <ixy>0.000</ixy>
+        <ixz>0.000</ixz>
+        <iyy>0.001</iyy>
+        <iyz>0.000</iyz>
+        <izz>0.001</izz>
+      </inertia>
+      <mass>0.114</mass>
+    </inertial>
+
+    <collision name="lidar_collision">
+      <pose>0.215 0 0.13 0 0 0</pose>
+      <geometry>
+        <cylinder>
+          <radius>0.0508</radius>
+          <length>0.18</length>
+        </cylinder>
+      </geometry>
+    </collision>
+
+    <visual name="lidar_visual">
+      <pose>0.215 0 0.13 0 0 0</pose>
+      <geometry>
+        <cylinder>
+          <radius>0.0508</radius>
+          <length>0.18</length>
+        </cylinder>
+      </geometry>
+      <material>
+        <ambient>0.0 0.0 0.0 1.0</ambient>
+        <diffuse>0.0 0.0 0.0 1.0</diffuse>
+        <specular>0.0 0.0 0.0 1.0</specular>
+        <emissive>0.0 0.0 0.0 1.0</emissive>
+      </material>
+    </visual>
+
+    <sensor name="lidar" type="gpu_lidar">
+      <pose>0 0 -0.25 0 0 0</pose>
+      <topic>lidar</topic>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>220</samples>
+            <resolution>1.000000</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>10</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>0.314159</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.3</min>
+          <max>15.0</max>
+          <resolution>0.015</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+
+      <plugin
+        filename="gz-sim-sensors-system"
+        name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
+      </plugin>
+    </sensor>
+
+    <sensor name="rgbd_camera" type="rgbd_camera">
+      <pose>0.35 0 -0.1 0 0 0</pose>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>320</width>
+          <height>240</height>
+        </image>
+        <clip>
+          <near>0.1</near>
+          <far>100</far>
+        </clip>
+      </camera>
+      <always_on>1</always_on>
+      <update_rate>30</update_rate>
+      <visualize>true</visualize>
+      <topic>custom_params</topic>
+
+    </sensor>
+  </link>
+
+  <!-- *********************** DRIVE WHEELS ******************************  -->
+  <link name="drivewhl_l_link">
+    <pose>0 0.23 -0.05 0 1.570796 1.570796</pose>
+    <inertial>
+        <mass>1</mass>
+        <inertia>
+            <ixx>0.043333</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.043333</iyy>
+            <iyz>0</iyz>
+            <izz>0.08</izz>
+        </inertia>
+    </inertial>
+    <collision name="drivewhl_l_collision">
+      <geometry>
+        <cylinder>
+          <radius>0.14</radius>
+          <length>0.06</length>
+        </cylinder>
+      </geometry>
+    </collision>
+
+    <visual name="drivewhl_l_visual">
+      <geometry>
+        <cylinder>
+          <radius>0.14</radius>
+          <length>0.06</length>
+        </cylinder>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name="drivewhl_r_link">
+    <pose>0 -0.23 -0.05 0 1.570796 1.570796</pose>
+    <inertial>
+        <mass>1</mass>
+        <inertia>
+            <ixx>0.043333</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.043333</iyy>
+            <iyz>0</iyz>
+            <izz>0.08</izz>
+        </inertia>
+    </inertial>
+    <collision name="drivewhl_r_collision">
+      <geometry>
+        <cylinder>
+          <radius>0.14</radius>
+          <length>0.06</length>
+        </cylinder>
+      </geometry>
+    </collision>
+
+    <visual name="drivewhl_r_visual">
+      <geometry>
+        <cylinder>
+          <radius>0.14</radius>
+          <length>0.06</length>
+        </cylinder>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- *********************** CASTER WHEEL ******************************  -->
+  <link name='front_caster'>
+    <pose>0.217 0 -0.1 0 0 0</pose>
+    <inertial>
+      <inertia>
+        <ixx>0.001</ixx>
+        <ixy>0.000</ixy>
+        <ixz>0.000</ixz>
+        <iyy>0.001</iyy>
+        <iyz>0.000</iyz>
+        <izz>0.001</izz>
+      </inertia>
+      <mass>70.0</mass>
+    </inertial>
+    <collision name='collision'>
+      <geometry>
+        <sphere>
+          <radius>0.09</radius>
+        </sphere>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual name="front_caster_visual">
+      <geometry>
+        <sphere>
+          <radius>0.09</radius>
+        </sphere>
+      </geometry>
+    </visual>
+  </link>
+
+  <link name='behind_caster'>
+    <pose>-0.217 0 -0.1 0 0 0</pose>
+    <inertial>
+      <inertia>
+        <ixx>0.001</ixx>
+        <ixy>0.000</ixy>
+        <ixz>0.000</ixz>
+        <iyy>0.001</iyy>
+        <iyz>0.000</iyz>
+        <izz>0.001</izz>
+      </inertia>
+      <mass>70.0</mass>
+    </inertial>
+    <collision name='collision'>
+      <geometry>
+        <sphere>
+          <radius>0.09</radius>
+        </sphere>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <visual name="behind_caster_visual">
+      <geometry>
+        <sphere>
+          <radius>0.09</radius>
+        </sphere>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- ************************ JOINTS ***********************************  -->
+  <!-- Pose of the joint is the same as the child link frame -->
+  <!-- Axis is the axis of rotation relative to the child link frame -->
+
+
+  <joint name="drivewhl_l_joint" type="revolute">
+    <parent>base_link</parent>
+    <child>drivewhl_l_link</child>
+    <pose>0 0 -0.03 0 0 0</pose>
+    <axis>
+      <xyz>0 0 1</xyz>
+    </axis>
+  </joint>
+
+  <joint name="drivewhl_r_joint" type="revolute">
+    <parent>base_link</parent>
+    <child>drivewhl_r_link</child>
+    <pose>0 0 0.03 0 0 0</pose>
+    <axis>
+      <xyz>0 0 1</xyz>
+    </axis>
+  </joint>
+
+  <joint name='caster_joint' type='fixed'>
+    <parent>base_link</parent>
+    <child>front_caster</child>
+    <pose>0 0 0 0 0 0</pose>
+  </joint>
+
+  <joint name='behind_caster_joint' type='fixed'>
+    <parent>base_link</parent>
+    <child>behind_caster</child>
+    <pose>0 0 0 0 0 0</pose>
+  </joint>
+
+  <joint name="imu_joint" type="fixed">
+    <parent>base_link</parent>
+    <child>imu_link</child>
+    <pose>0 0 0 0 0 0</pose>
+  </joint>
+
+
+  <joint name="lidar_joint" type="fixed">
+    <parent>base_link</parent>
+    <child>lidar_link</child>
+    <pose>0 0 0 0 0 0</pose>
+  </joint>
+
+  <!-- *********************** WHEEL ODOMETRY ***************************    -->
+  <!-- Moving Left-->
+  <plugin filename="gz-sim-triggered-publisher-system"
+          name="gz::sim::systems::TriggeredPublisher">
+      <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+          <match field="data">16777234</match>
+      </input>
+      <output type="gz.msgs.Twist" topic="/cmd_vel">
+          linear: {x: 0.0}, angular: {z: 3.5}
+      </output>
+  </plugin>
+  <!-- Moving Forward-->
+  <plugin filename="gz-sim-triggered-publisher-system"
+          name="gz::sim::systems::TriggeredPublisher">
+      <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+          <match field="data">16777235</match>
+      </input>
+      <output type="gz.msgs.Twist" topic="/cmd_vel">
+          linear: {x: 5.5}, angular: {z: 0.0}
+      </output>
+  </plugin>
+  <!-- Moving Right-->
+  <plugin filename="gz-sim-triggered-publisher-system"
+          name="gz::sim::systems::TriggeredPublisher">
+      <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+          <match field="data">16777236</match>
+      </input>
+      <output type="gz.msgs.Twist" topic="/cmd_vel">
+          linear: {x: 0.0}, angular: {z: -3.5}
+      </output>
+  </plugin>
+  <!-- Moving Backward-->
+  <plugin filename="gz-sim-triggered-publisher-system"
+          name="gz::sim::systems::TriggeredPublisher">
+      <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+          <match field="data">16777237</match>
+      </input>
+      <output type="gz.msgs.Twist" topic="/cmd_vel">
+          linear: {x: -5.5}, angular: {z: 0.0}
+      </output>
+  </plugin>
+  <!-- Moving Stop  -->
+  <plugin filename="gz-sim-triggered-publisher-system"
+          name="gz::sim::systems::TriggeredPublisher">
+      <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+          <match field="data">84</match>
+      </input>
+      <output type="gz.msgs.Twist" topic="/cmd_vel">
+          linear: {x: 0.0}, angular: {z: 0.0}
+      </output>
+  </plugin>
+
+  <!-- *********************** siasun *********************   -->
+
+<!-- use next command pub volcity to car
+
+  ign topic -t /wheelvolcity -m ignition.msgs.StringMsg -p "data:'{\"cmd\":\"MoveAt\",\"vel\":[{\"joint\":0,\"velocity\":0},{\"joint\":1,\"velocity\":0}]}'" -->
+
+
+  <plugin filename="PluginDiffDriveGZ" name="Drive::DifferDriveUnit">
+    <left_joint>drivewhl_l_joint</left_joint>
+    <right_joint>drivewhl_r_joint</right_joint>
+    <subTopic>wheelvolcity</subTopic>
+    <pubTopic>pose</pubTopic>
+    <left_joint_init_V>0</left_joint_init_V>
+    <right_joint_init_V>0</right_joint_init_V>
+    <server_ip>172.31.0.4</server_ip>
+    <server_port>8787</server_port>
+  </plugin>
+
+  <plugin filename="PluginImuBroadcastDriveGZ" name="Drive::ImuBroadcastDriveUnit">
+    <ServerIp>127.0.0.1</ServerIp>
+    <ServerPort>8886</ServerPort>
+    <topic>imu</topic>
+  </plugin>
+
+  <plugin filename="PluginLidarBroadcastDriveGZ" name="Drive::LidarBroadcastDriveUnit">
+    <ServerIp>127.0.0.1</ServerIp>
+    <ServerPort>8885</ServerPort>
+    <topic>lidar</topic>
+    <MutilSend>true</MutilSend>
+  </plugin>
+   <plugin filename="PluginOdomBroadcastDriveGZ" name="Drive::OdomBroadcastDriveUnit">
+    <ServerIp>127.0.0.1</ServerIp>
+    <ServerPort>8887</ServerPort>
+    <topic>model/vehicle/odometry</topic>
+  </plugin>
+
+  <!-- *********************** System diff drive *********************   -->
+  <plugin
+      filename="gz-sim-diff-drive-system"
+      name="gz::sim::systems::DiffDrive">
+      <left_joint>drivewhl_l_joint</left_joint>
+      <right_joint>drivewhl_r_joint</right_joint>
+      <wheel_separation>0.46</wheel_separation>
+      <wheel_radius>0.4</wheel_radius>
+      <odom_publish_frequency>1</odom_publish_frequency>
+      <topic>cmd_vel</topic>
+  </plugin>
+
+  <!-- *********************** Imu *********************   -->
+  <plugin filename="gz-sim-imu-system"
+        name="gz::sim::systems::Imu">
+  </plugin>
+
+  </model>
+</sdf>
